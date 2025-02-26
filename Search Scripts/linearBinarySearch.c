@@ -4,15 +4,24 @@
 
 int main(){
     clock_t startTime, endTime; //Variables to measure the time
-    int countNumber = 100000, number, position = -1, option;
-    int vector[countNumber];
+    int countNumber, number, position = -1, option;
 
-    printf("Count number is:%d\n",countNumber);
+    printf("Please, insert the count number:",countNumber);
+    scanf("%d", &countNumber);
+    if(countNumber <= 0){
+        printf("Please, insert a positive value\nClosing program...\n");
+        return 0;
+    }
+
+    int *vector = malloc(countNumber * sizeof(int)); //Allocating the memory
+    if(vector == NULL){ //Checking if there is avaible memory
+        printf("Fail trying to allocate memory :(\nClosing program...\n");
+        return 0;
+    }
+
     for(int i = 0; i < countNumber; i++) //Filling up the vector
         vector[i] = i;
     
-   
-
     printf("Please, insert the number: ");
     scanf("%d", &number);
 
@@ -34,18 +43,17 @@ int main(){
     
     case 2:
         startTime = clock();
-        int middleVector = 0, start = 0, end = countNumber - 1, check = 1; //Variables to acess our vector
+        int runningMiddleVector = 0, start = 0, end = countNumber - 1; //Variables to acess our vector
 
-        while (check == 1 && start != end)
+        while (start < end)
         {
-            middleVector += (end - start) / 2; 
-            if(number < vector[middleVector]) //My running number is bigger (getting the first part of the running vector) 
-                end = middleVector;
-            else if(number > vector[middleVector]) //My running number is smaller (getting the last part of the running vector)
-                start = middleVector;
-            else{ //I found the number
-                position = middleVector;
-                check = 0;
+            runningMiddleVector = start + (end - start) / 2; 
+            if(number < vector[runningMiddleVector]) //My running number is bigger (getting the first part of the running vector) 
+                end = runningMiddleVector;
+            else if(number > vector[runningMiddleVector]) //My running number is smaller (getting the last part of the running vector)
+                start = runningMiddleVector;
+            else if(number == vector[runningMiddleVector]){ //I found the number
+                position = runningMiddleVector;
                 break;
             }
         }
@@ -57,9 +65,10 @@ int main(){
         break;
     }
     
-    
     printf("The position is: %d\n", position);
     printf("The time used was: %f\n", (endTime - startTime) / CLOCKS_PER_SEC);
+
+    free(vector);
 
     return 0;
 }
